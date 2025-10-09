@@ -1,0 +1,92 @@
+{
+  "name": "snacktrackapi",
+  "version": "1.0.1",
+  "description": "API para controle financeiro de pequenos comércios e autônomos.",
+  "main": "src/server.js",
+  "scripts": {
+    "dist": "tsup",
+    "dist:watch": "tsup --watch",
+    "dist:prod": "NODE_ENV=production tsup",
+    "start:dev": "tsx src/server.ts",
+    "start:watch": "tsx watch src/server.ts",
+    "start:dist": "npm run dist && node dist/src/server.js",
+    "seed:dev": "tsx src/database/seeds/run-seeds.ts",
+    "seed:watch": "tsx watch src/database/seeds/run-seeds.ts",
+    "seed:dist": "npm run dist && node dist/database/seeds/run-seeds.js",
+    "seed:clear": "tsx src/database/seeds/run-seeds.ts --clear",
+    "seed:locations": "tsx src/database/seeds/run-seeds.ts --only locations",
+    "build:commit": "npm run dist && node dist/src/scripts/gitlab-commit.js",
+    "build:commit:dev": "npm run dist && node dist/src/scripts/gitlab-commit.js dev",
+    "build:commit:main": "npm run dist && node dist/src/scripts/gitlab-commit.js main",
+    "prepare": "husky install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/flpblacksystems/typescript-ts/snacktrackapi.git"
+  },
+  "keywords": [
+    "financeiro",
+    "controle",
+    "api",
+    "typescript",
+    "v1",
+    "controle-financeiro",
+    "mongodb",
+    "express",
+    "rest-api"
+  ],
+  "author": "DevLipeBlack",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://gitlab.com/flpblacksystems/typescript-ts/snacktrackapi/issues"
+  },
+  "homepage": "https://gitlab.com/flpblacksystems/typescript-ts/snacktrackapi#readme",
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/jsonwebtoken": "^9.0.8",
+    "@types/mongoose": "^5.11.96",
+    "@types/node": "^22.12.0",
+    "husky": "^9.1.7",
+    "tsup": "^8.3.6",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3"
+  },
+  "dependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "bcrypt": "^5.1.1",
+    "chalk": "^4.1.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-async-errors": "^3.1.1",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.9.5",
+    "zod": "^3.24.1"
+  },
+"versionInfo": {
+    "v1": {
+      "releaseDate": "2024-03-20",
+      "features": [
+        "Sistema de caixa completo",
+        "Controle de movimentações",
+        "Gestão de reforços",
+        "Auto-link de operações",
+        "Cálculo automático de saldo",
+        "Validações robustas com Zod",
+        "Autenticação JWT",
+        "Logs centralizados",
+        "Seeds para desenvolvimento"
+      ],
+      "techStack": [
+        "TypeScript",
+        "Node.js",
+        "Express",
+        "MongoDB",
+        "Mongoose",
+        "JWT",
+        "Zod"
+      ]
+    }
+  }
+}
