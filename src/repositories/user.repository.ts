@@ -3,12 +3,13 @@ import { IUserInput, IUserOutput, IUserSearchParams } from "../interfaces/IUser.
 import UserModel from "../models/user.model";
 
 export default class UserRepository {
-    async create(data: IUserInput, addressId: Types.ObjectId): Promise<IUserOutput> 
+    async create(data: IUserInput, addressId?: Types.ObjectId | null): Promise<IUserOutput>
     {
         const dataSetCreate = {
             ...data,
-            address: addressId
-        }
+            ...(addressId ? { address: addressId } : {}),
+        };
+
         return await UserModel.create(dataSetCreate);
     }
 
