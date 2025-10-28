@@ -14,18 +14,24 @@ export default class UserService {
     {
         try 
         {
-            const address: IAddressOutput = await this.addressRepository.create(data.address);
+            const { address: addressInput, ...userPayload } = data;
+
+            const address: IAddressOutput | null = addressInput
+                ? await this.addressRepository.create(addressInput)
+                : null;
+
             const hashedPassword = await PasswordHash.hash(data.password);
             const userData = {
-                ...data,
+                ...userPayload,
                 password: hashedPassword
             } as IUserInput;
 
-            const createdUser = await this.repository.create(userData, address._id);
-            
+            const createdUser = await this.repository.create(userData, address?._id ?? null);
+
             const userOutput: IUserOutput = {
                 ...createdUser,
-                address: address, 
+                address: address,
+                phone: createdUser.phone ?? null,
                 isOnline: createdUser.isOnline || false,
                 isValid: createdUser.isValid || false,
                 emailVerifiedAt: createdUser.emailVerifiedAt || null,

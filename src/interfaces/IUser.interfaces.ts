@@ -7,7 +7,7 @@ export interface IUserInput {
     lastName: string;
     email: string;
     password: string;
-    phone: string;
+    phone?: string;
     address?: IAddressInput;
     isOnline?: boolean;
     isValid?: boolean;
@@ -20,7 +20,7 @@ export interface IUserOutput {
     lastName: string;
     email: string;
     password: string;
-    phone: string;
+    phone: string | null;
     address: IAddressOutput | null;
     isOnline: boolean;
     isValid: boolean;
