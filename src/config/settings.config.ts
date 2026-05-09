@@ -16,8 +16,8 @@ function normalizeJwtDuration(value: string | undefined, fallback: string, numer
 }
 
 export const serverConfig: IServer = {
-    host: process.env.API_HOST || 'localhost',
-    port: parseInt(process.env.API_PORT || '3333', 10),
+    host: process.env.API_HOST || (process.env.NODE_ENV === 'production' ? '0.0.0.0' : 'localhost'),
+    port: parseInt(process.env.PORT || process.env.API_PORT || '3333', 10),
     prefixAPI: process.env.API_PREFIX_PATH || '/snacktrack',
 };
 

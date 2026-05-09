@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: snacktrack-api
+    runtime: node
+    plan: free
+    buildCommand: npm ci --include=dev && npm run dist && npm prune --omit=dev
+    startCommand: node dist/src/server.js
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: API_HOST
+        value: 0.0.0.0
+      - key: API_PREFIX_PATH
+        value: /snacktrack
+      - key: DB_CONNECT_STRING
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: REFRESH_TOKEN_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 10h
+      - key: REFRESH_TOKEN_EXPIRES_IN
+        value: 10d
