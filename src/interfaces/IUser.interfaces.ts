@@ -21,11 +21,11 @@ export interface IUserOutput {
     email: string;
     password: string;
     phone: string | null;
-    address: IAddressOutput | null;
+    address: Types.ObjectId | IAddressOutput | null;
     isOnline: boolean;
     isValid: boolean;
     emailVerifiedAt: Date | null;
-    lastWorkspace: IWorkspaceOutput | null;
+    lastWorkspace: Types.ObjectId | IWorkspaceOutput | null;
     createdAt: Date;
     updatedAt: Date;
 }

@@ -12,17 +12,30 @@ export default class WorkspaceRepository {
     }
 
     async addMember(workspaceId: Types.ObjectId, userId: Types.ObjectId, roleId: Types.ObjectId): Promise<IWorkspaceOutput | null> {
+        const workspace = await WorkspaceModel.findById(workspaceId);
+        if (!workspace) {
+            return null;
+        }
+
+        const alreadyMember = workspace.members.some((member: any) => member.user.toString() === userId.toString());
+        if (alreadyMember) {
+            return await WorkspaceModel.findById(workspaceId)
+                .populate('members.user')
+                .populate('members.role');
+        }
+
         return await WorkspaceModel.findByIdAndUpdate(
             workspaceId,
             {
                 $push: {
                     members: {
                         user: userId,
-                        role: roleId
+                        role: roleId,
+                        addedAt: new Date()
                     }
                 }
             },
-            { new: true }
+            { new: true, runValidators: true }
         ).populate('members.user').populate('members.role');
     }
 
@@ -36,7 +49,7 @@ export default class WorkspaceRepository {
         return await WorkspaceModel.findByIdAndUpdate(
             id,
             { $set: data },
-            { new: true }
+            { new: true, runValidators: true }
         ).populate('members.user').populate('members.role');
     }
 
@@ -52,7 +65,7 @@ export default class WorkspaceRepository {
                     members: { user: userId }
                 }
             },
-            { new: true }
+            { new: true, runValidators: true }
         ).populate('members.user').populate('members.role');
     }
 

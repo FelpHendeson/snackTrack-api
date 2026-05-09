@@ -26,7 +26,7 @@ export default class UserRepository {
     }
 
     async update(id: Types.ObjectId, userData: Partial<IUserInput>): Promise<IUserOutput | null> {
-        return await UserModel.findByIdAndUpdate(id, userData, { new: true });
+        return await UserModel.findByIdAndUpdate(id, userData, { new: true, runValidators: true });
     };
 
     async delete(id: Types.ObjectId): Promise<IUserOutput | null> {

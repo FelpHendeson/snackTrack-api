@@ -1,4 +1,4 @@
-import { Schema, models, model, Types } from "mongoose";
+import { Schema, models, model } from "mongoose";
 import { IWorkspaceOutput } from "../interfaces/IWorkspace.interface";
 
 const workspaceSchema = new Schema(
@@ -9,19 +9,19 @@ const workspaceSchema = new Schema(
         },
         members: [{
             user: {
-                type: Types.ObjectId,
+                type: Schema.Types.ObjectId,
                 ref: 'User',
                 required: true
             },
             role: {
-                type: Types.ObjectId,
+                type: Schema.Types.ObjectId,
                 ref: 'Role',
                 required: true
             },
             addedAt: {
                 type: Date,
                 required: false,
-                default: new Date()
+                default: Date.now
             },
             updatedAt: {
                 type: Date,
@@ -33,6 +33,8 @@ const workspaceSchema = new Schema(
         timestamps: true
     }
 );
+
+workspaceSchema.index({ 'members.user': 1 });
 
 const WorkspaceModel = models.Workspace || model<IWorkspaceOutput>('Workspace', workspaceSchema);
 

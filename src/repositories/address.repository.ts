@@ -15,7 +15,7 @@ export default class AddressRepository {
     }
 
     async update(id: Types.ObjectId, data: any) {
-        return await AddressModel.findByIdAndUpdate(id, { $set: data }, { new: true }).populate('neighborhood');
+        return await AddressModel.findByIdAndUpdate(id, { $set: data }, { new: true, runValidators: true }).populate('neighborhood');
     }
 
     async delete(id: Types.ObjectId) {

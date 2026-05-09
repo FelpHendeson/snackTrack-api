@@ -9,15 +9,25 @@ export default class WorkspaceService {
     private repository = new WorkspaceRepository();
     private roleService = new RoleService();
 
+    private async getOrCreateDefaultOwnerRole(): Promise<IRoleOutput> {
+        const defaultRole: IRoleOutput | IRoleOutput[] | null = await this.roleService.findRoleBy({ name: "Owner" });
+
+        if (Array.isArray(defaultRole) && defaultRole.length > 0) {
+            return defaultRole[0];
+        }
+
+        return await this.roleService.createRole({
+            name: "Owner",
+            modules: ["entradas", "saidas", "relatoriosfinanceiros"],
+            permissions: ["create", "read", "update", "delete"],
+            description: "Dono/Criador do Workspace"
+        });
+    }
+
     async createWorkspace(name: string, userId: Types.ObjectId): Promise<IWorkspaceOutput> {
         try {
-            // Buscar a role padrão (pode ser 'owner' ou qualquer outra que você definir)
-            const defaultRole: IRoleOutput | IRoleOutput[] | null = await this.roleService.findRoleBy({ name: 'Owner' });
-            if (!Array.isArray(defaultRole) || defaultRole.length === 0) {
-                throw new CustomError('Role padrão não encontrada', 400);
-            }
-            const roleId = defaultRole[0]._id;
-            
+            const roleId = (await this.getOrCreateDefaultOwnerRole())._id;
+
             const workspace = await this.repository.create({
                 name,
                 members: [{
@@ -29,7 +39,6 @@ export default class WorkspaceService {
 
             return workspace;
         } catch (error: any) {
-            console.error(error);
             throw new CustomError(`Erro ao criar workspace: ${error.message}`, 500);
         }
     }
@@ -38,7 +47,7 @@ export default class WorkspaceService {
         try {
             const workspace = await this.repository.addMember(workspaceId, userId, roleId);
             if (!workspace) {
-                throw new CustomError('Workspace não encontrado', 404);
+                throw new CustomError("Workspace nao encontrado", 404);
             }
             return workspace;
         } catch (error: any) {
@@ -58,7 +67,7 @@ export default class WorkspaceService {
         try {
             const workspace = await this.repository.findById(id);
             if (!workspace) {
-                throw new CustomError('Workspace não encontrado', 404);
+                throw new CustomError("Workspace nao encontrado", 404);
             }
             return workspace;
         } catch (error: any) {
@@ -70,7 +79,7 @@ export default class WorkspaceService {
         try {
             const workspace = await this.repository.update(id, data);
             if (!workspace) {
-                throw new CustomError('Workspace não encontrado', 404);
+                throw new CustomError("Workspace nao encontrado", 404);
             }
             return workspace;
         } catch (error: any) {
@@ -90,7 +99,7 @@ export default class WorkspaceService {
         try {
             const workspace = await this.repository.removeMember(workspaceId, userId);
             if (!workspace) {
-                throw new CustomError('Workspace não encontrado', 404);
+                throw new CustomError("Workspace nao encontrado", 404);
             }
             return workspace;
         } catch (error: any) {
@@ -106,4 +115,4 @@ export default class WorkspaceService {
             throw new CustomError(`Erro ao buscar workspaces do membro: ${error.message}`, error.statusCode || 500);
         }
     }
-} 
+}

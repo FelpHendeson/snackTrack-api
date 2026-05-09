@@ -2,6 +2,7 @@ import { serverConfig } from "./config/settings.config";
 import { IServer } from "./interfaces/server.interface";
 import express, { Application as ExpressApp } from "express";
 import cors from "cors";
+import helmet from "helmet";
 import Logger from "./utils/logger.utils";    
 import db from "./config/database.config";
 import userRoutes from "./routes/user.route";
@@ -12,6 +13,11 @@ import originRoutes from "./routes/origin.route";
 import movementRoutes from "./routes/movement.route";
 import cashRefilRoutes from "./routes/cashRefill.route";
 import cashRegisterRoutes from "./routes/cashRegister.route";
+import countryRoutes from "./routes/country.route";
+import stateRoutes from "./routes/state.route";
+import cityRoutes from "./routes/city.route";
+import neighborhoodRoutes from "./routes/neighborhood.route";
+import addressRoutes from "./routes/address.route";
 
 export default class Application {
     // ?? Instância do Express 
@@ -34,6 +40,7 @@ export default class Application {
             Logger.logger('Conectado ao banco de dados com sucesso!', 'Server', 'success');
 
             // ?? Middlewares globais
+            this.app.use(helmet());
             this.app.use(cors());
             this.app.use(express.json());
             this.app.use(express.urlencoded({ extended: true}));
@@ -43,6 +50,11 @@ export default class Application {
             this.app.use(this.prefixAPI, authRoutes);
             this.app.use(this.prefixAPI, roleRoutes);
             this.app.use(this.prefixAPI, workspaceRoutes);
+            this.app.use(this.prefixAPI, countryRoutes);
+            this.app.use(this.prefixAPI, stateRoutes);
+            this.app.use(this.prefixAPI, cityRoutes);
+            this.app.use(this.prefixAPI, neighborhoodRoutes);
+            this.app.use(this.prefixAPI, addressRoutes);
             this.app.use(this.prefixAPI, originRoutes);
             this.app.use(this.prefixAPI, movementRoutes);
             this.app.use(this.prefixAPI, cashRefilRoutes);

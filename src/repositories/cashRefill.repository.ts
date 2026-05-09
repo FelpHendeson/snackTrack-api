@@ -19,7 +19,7 @@ export default class CashRefillRepository {
     }
 
     async update(id: Types.ObjectId, data: Partial<ICashRefillInput>): Promise<ICashRefillOutput | null> {
-        return await CashRefillModel.findByIdAndUpdate(id, { $set: data }, { new: true });
+        return await CashRefillModel.findByIdAndUpdate(id, { $set: data }, { new: true, runValidators: true });
     }
 
     async delete(id: Types.ObjectId): Promise<void> {

@@ -1,30 +1,38 @@
 import { Request, Response, NextFunction } from "express";
-import { ZodSchema } from "zod";
+import { ZodError, ZodSchema } from "zod";
 import Logger from "../utils/logger.utils";
 
-export const validateSchema = (schema: ZodSchema) => {
+type RequestSource = "body" | "query" | "params";
+
+const formatValidationError = (error: unknown): string => {
+    if (error instanceof ZodError) {
+        return error.errors.map((err) => err.message).join(", ") || "Erro interno do servidor";
+    }
+
+    if (error instanceof Error) {
+        return error.message;
+    }
+
+    return "Erro interno do servidor";
+};
+
+const validateRequestSource = (schema: ZodSchema, source: RequestSource) => {
     return (req: Request, res: Response, next: NextFunction) => {
         try {
-            req.body = schema.parse(req.body);
+            (req as any)[source] = schema.parse((req as any)[source]);
             next();
-        } catch (error: any) {
-            if (error) {
-                console.log(error);
-                const errorMessages = error.errors.map((err: any) => err.message).join(", ") || "Erro interno do servidor";
-                Logger.logger(`Erro ao validar entradas da requisição: ${errorMessages}`, 'validation-handler', 'error');
-                res.status(400).json({
-                    status: "error",
-                    message: errorMessages
-                });
-                return;
-            } else {
-                Logger.logger(`Erro interno do servidor: ${error.message}`, 'validation-handler', 'error');
-                res.status(500).json({
-                    status: "error",
-                    message: "Erro interno do servidor"
-                });
-                return;
-            }
+        } catch (error: unknown) {
+            const errorMessage = formatValidationError(error);
+            Logger.logger(`Erro ao validar entradas da requisicao: ${errorMessage}`, "validation-handler", "error");
+            res.status(400).json({
+                status: "error",
+                message: errorMessage
+            });
+            return;
         }
     };
 };
+
+export const validateSchema = (schema: ZodSchema) => validateRequestSource(schema, "body");
+export const validateQuerySchema = (schema: ZodSchema) => validateRequestSource(schema, "query");
+export const validateParamsSchema = (schema: ZodSchema) => validateRequestSource(schema, "params");

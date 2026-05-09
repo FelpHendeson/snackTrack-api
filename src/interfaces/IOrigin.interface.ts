@@ -1,9 +1,10 @@
 import { Types } from "mongoose";
+import { FinancialMovementType } from "../constants/financialMovement.constants";
 
 export interface IOriginInput {
     name: string;
     description?: string;
-    type: string;
+    type: FinancialMovementType;
     workspaceId: Types.ObjectId;
     createdBy?: Types.ObjectId;
 }
@@ -11,10 +12,10 @@ export interface IOriginInput {
 export interface IOriginOutput {
     _id: Types.ObjectId;
     name: string;
-    description: string;
-    type: string;
+    description?: string;
+    type: FinancialMovementType;
     createdBy: Types.ObjectId;
-    updatedBy: Types.ObjectId;
+    updatedBy?: Types.ObjectId;
     workspaceId: Types.ObjectId;
     createdAt: Date;
     updatedAt: Date;

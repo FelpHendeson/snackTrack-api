@@ -5,7 +5,9 @@ const roleSchema = new Schema(
     {   
         name: {
             type: String,
-            required: true
+            required: true,
+            trim: true,
+            unique: true
         },
         permissions: {
             type: [String],
@@ -17,6 +19,7 @@ const roleSchema = new Schema(
         },
         description: {
             type: String,
+            trim: true,
             required: false
         }
     },

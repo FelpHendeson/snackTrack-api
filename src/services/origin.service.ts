@@ -2,6 +2,7 @@ import { Types } from "mongoose";
 import OriginRepository from "../repositories/origin.repository";
 import { IOriginInput, IOriginOutput } from "../interfaces/IOrigin.interface";
 import { CustomError } from "../utils/customError.utils";
+import { isFinancialMovementType } from "../constants/financialMovement.constants";
 
 export default class OriginService {
     private repository = new OriginRepository();
@@ -10,6 +11,10 @@ export default class OriginService {
         try {
             if (!data.workspaceId) {
                 throw new CustomError("Workspace é obrigatório", 400);
+            }
+
+            if (!isFinancialMovementType(data.type)) {
+                throw new CustomError("Tipo da origem deve ser entrada ou saida", 400);
             }
 
             const originData: IOriginInput = {
@@ -59,6 +64,10 @@ export default class OriginService {
             const originExists = await this.repository.findById(id);
             if (!originExists) {
                 throw new CustomError("Origem não encontrada", 404);
+            }
+
+            if (data.type && !isFinancialMovementType(data.type)) {
+                throw new CustomError("Tipo da origem deve ser entrada ou saida", 400);
             }
 
             const updateData = {

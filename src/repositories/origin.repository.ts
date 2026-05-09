@@ -19,7 +19,7 @@ export default class OriginRepository {
     }
 
     async update(id: Types.ObjectId, data: Partial<IOriginInput>): Promise<IOriginOutput | null> {
-        return await OriginModel.findByIdAndUpdate(id, { $set: data }, { new: true });
+        return await OriginModel.findByIdAndUpdate(id, { $set: data }, { new: true, runValidators: true });
     }
 
     async delete(id: Types.ObjectId): Promise<void> {

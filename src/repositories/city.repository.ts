@@ -15,7 +15,7 @@ export default class CityRepository {
     }
 
     async update(id: Types.ObjectId, data: any) {
-        return await CityModel.findByIdAndUpdate(id, { $set: data }, { new: true }).populate('state');
+        return await CityModel.findByIdAndUpdate(id, { $set: data }, { new: true, runValidators: true }).populate('state');
     }
 
     async delete(id: Types.ObjectId) {

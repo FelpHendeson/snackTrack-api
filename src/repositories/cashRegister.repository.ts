@@ -52,11 +52,15 @@ export default class CashRegisterRepository {
         const updatedCashRegister = await CashRegisterModel.findByIdAndUpdate(
             cashRegisterId,
             {
-                $push: { movements: { $each: movementIds } },
+                $addToSet: { movements: { $each: movementIds } },
                 $set: { updatedBy }
             },
-            { new: true }
+            { new: true, runValidators: true }
         ).populate('movements').populate('refills');
+
+        if (!updatedCashRegister) {
+            return null;
+        }
 
         // Recalcula o saldo
         const newBalance = await this.calculateBalance(updatedCashRegister);
@@ -70,7 +74,7 @@ export default class CashRegisterRepository {
                     finalValue: newBalance
                 }
             },
-            { new: true }
+            { new: true, runValidators: true }
         ).populate('movements').populate('refills');
     }
 
@@ -84,11 +88,15 @@ export default class CashRegisterRepository {
         const updatedCashRegister = await CashRegisterModel.findByIdAndUpdate(
             cashRegisterId,
             {
-                $push: { refills: { $each: refillIds } },
+                $addToSet: { refills: { $each: refillIds } },
                 $set: { updatedBy }
             },
-            { new: true }
+            { new: true, runValidators: true }
         ).populate('movements').populate('refills');
+
+        if (!updatedCashRegister) {
+            return null;
+        }
 
         // Recalcula o saldo
         const newBalance = await this.calculateBalance(updatedCashRegister);
@@ -102,7 +110,7 @@ export default class CashRegisterRepository {
                     finalValue: newBalance
                 }
             },
-            { new: true }
+            { new: true, runValidators: true }
         ).populate('movements').populate('refills');
     }
 
@@ -172,7 +180,7 @@ export default class CashRegisterRepository {
     }
 
     async update(id: Types.ObjectId, data: Partial<ICashRegisterInput>): Promise<ICashRegisterOutput | null> {
-        return await CashRegisterModel.findByIdAndUpdate(id, { $set: data }, { new: true })
+        return await CashRegisterModel.findByIdAndUpdate(id, { $set: data }, { new: true, runValidators: true })
             .populate("movements")
             .populate("refills");
     }
@@ -214,14 +222,18 @@ export default class CashRegisterRepository {
         const updatedCashRegister = await CashRegisterModel.findByIdAndUpdate(
             cashRegisterId,
             {
-                $push: {
+                $addToSet: {
                     movements: { $each: newMovements },
                     refills: { $each: newRefills }
                 },
                 $set: { updatedBy }
             },
-            { new: true }
+            { new: true, runValidators: true }
         ).populate('movements').populate('refills');
+
+        if (!updatedCashRegister) {
+            return null;
+        }
 
         // Recalcula o saldo
         const newBalance = await this.calculateBalance(updatedCashRegister);
@@ -235,7 +247,7 @@ export default class CashRegisterRepository {
                     finalValue: newBalance
                 }
             },
-            { new: true }
+            { new: true, runValidators: true }
         ).populate('movements').populate('refills');
     }
 
@@ -263,7 +275,7 @@ export default class CashRegisterRepository {
                     updatedBy
                 }
             },
-            { new: true }
+            { new: true, runValidators: true }
         ).populate('movements').populate('refills');
     }
 
@@ -285,7 +297,7 @@ export default class CashRegisterRepository {
                     updatedBy
                 }
             },
-            { new: true }
+            { new: true, runValidators: true }
         ).populate('movements').populate('refills');
     }
 }

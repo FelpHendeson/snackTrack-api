@@ -12,19 +12,32 @@ export const authenticateToken = (req: ICustomRequest, res: Response, next: Next
         const token = authHeader && authHeader.split(' ')[1];
 
         if (!token) {
-            throw new CustomError('Token não fornecido', 401);
+            throw new CustomError('Token nao fornecido', 401);
         }
 
-        jwt.verify(token, authConfig.jwtSecret as Secret, (err, decoded) => {
-            if (err) {
-                throw new CustomError('Token inválido', 403);
-            }
-            req.user = decoded as ITokenPayload;
-            next();
-        });
+        req.user = jwt.verify(token, authConfig.jwtSecret as Secret) as ITokenPayload;
+        next();
     } catch (error: any) {
+        if (error instanceof jwt.TokenExpiredError) {
+            Logger.logger('Erro ao autenticar usuario: Token expirado', 'auth-controller', 'error');
+            res.status(401).json({
+                status: "error",
+                message: "Token expirado"
+            });
+            return;
+        }
+
+        if (error instanceof jwt.JsonWebTokenError) {
+            Logger.logger('Erro ao autenticar usuario: Token invalido', 'auth-controller', 'error');
+            res.status(403).json({
+                status: "error",
+                message: "Token invalido"
+            });
+            return;
+        }
+
         if(error instanceof CustomError) {
-            Logger.logger(`Erro ao autenticar usuário: ${error.message}`, 'auth-controller', 'error');
+            Logger.logger(`Erro ao autenticar usuario: ${error.message}`, 'auth-controller', 'error');
             res.status(error.statusCode).json({
                 status: "error",
                 message: error.message
@@ -32,10 +45,10 @@ export const authenticateToken = (req: ICustomRequest, res: Response, next: Next
             return;
         }
 
-        Logger.logger(`Erro interno do servidor ao realizar login: ${error.message}`, 'auth-controller', 'error');
+        Logger.logger(`Erro interno do servidor ao autenticar usuario: ${error.message}`, 'auth-controller', 'error');
         res.status(500).json({
             status: "error",
-            message: "Erro interno do servidor ao autenticar usuário"
+            message: "Erro interno do servidor ao autenticar usuario"
         });
     }
 };

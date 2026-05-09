@@ -6,18 +6,18 @@ export const rolesData: IRoleInput[] =
         name:"Owner",
         modules:["entradas", "saidas", "relatoriosfinanceiros"],
         permissions:["create", "read", "update", "delete"],
-        description:"Dono/Criados do Wokspace"
+        description:"Dono/Criador do Workspace"
     },
     {
         name:"Accountant",
         modules:["entradas", "saidas", "relatoriosfinanceiros"],
         permissions:["create", "read", "update", "delete"],
-        description:"Dono/Criados do Wokspace"
+        description:"Contador do Workspace"
     },
     {
         name:"Employee",
         modules:["entradas", "saidas", "relatoriosfinanceiros"],
         permissions:["create", "read", "update", "delete"],
-        description:"Dono/Criados do Wokspace"
+        description:"Colaborador do Workspace"
     },
 ]

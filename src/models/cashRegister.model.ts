@@ -1,10 +1,10 @@
-import { Schema, model, Types, models } from "mongoose";
+import { Schema, model, models } from "mongoose";
 import { ICashRegisterOutput } from "../interfaces/ICashRegister.interface";
 
 const cashRegisterSchema = new Schema(
   {
     workspaceId: { 
-        type: Types.ObjectId, 
+        type: Schema.Types.ObjectId, 
         ref: "Workspace", 
         required: true 
     },
@@ -37,20 +37,20 @@ const cashRegisterSchema = new Schema(
         default: "open"
     },
     movements: [{ 
-        type: Types.ObjectId, 
+        type: Schema.Types.ObjectId, 
         ref: "Movement" 
     }],
     refills: [{ 
-        type: Types.ObjectId, 
+        type: Schema.Types.ObjectId, 
         ref: "CashRefill" 
     }],
     createdBy: { 
-        type: Types.ObjectId, 
+        type: Schema.Types.ObjectId, 
         ref: "User", 
         required: true 
     },
     updatedBy: { 
-        type: Types.ObjectId, 
+        type: Schema.Types.ObjectId, 
         ref: "User" 
     }
   },

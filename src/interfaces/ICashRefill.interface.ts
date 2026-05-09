@@ -16,7 +16,7 @@ export interface ICashRefillOutput {
     date: Date;
     description?: string;
     createdBy: Types.ObjectId;
-    updatedBy: Types.ObjectId;
+    updatedBy?: Types.ObjectId;
     createdAt: Date;
     updatedAt: Date;
 }

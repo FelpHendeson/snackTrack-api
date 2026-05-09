@@ -13,19 +13,32 @@ class DatabaseSeeder {
     private static async clearCollection(model: Model<any>, name: string) {
         try {
             await model.deleteMany({});
-            Logger.logger(`Coleção ${name} limpa`, 'Seeder', 'info');
+            Logger.logger(`Colecao ${name} limpa`, 'Seeder', 'info');
         } catch (error) {
-            Logger.logger(`Erro ao limpar coleção ${name}: ${error}`, 'Seeder', 'error');
+            Logger.logger(`Erro ao limpar colecao ${name}: ${error}`, 'Seeder', 'error');
             throw error;
         }
     }
 
+    private static async upsertDocument(model: Model<any>, filter: Record<string, any>, data: Record<string, any>) {
+        return await model.findOneAndUpdate(
+            filter,
+            { $set: data },
+            {
+                upsert: true,
+                new: true,
+                setDefaultsOnInsert: true,
+                runValidators: true
+            }
+        );
+    }
+
     static async clearAllCollections() {
         const collections = [
-            { model: CountryModel, name: 'Countries' },
-            { model: StateModel, name: 'States' },
+            { model: NeighborhoodModel, name: 'Neighborhoods' },
             { model: CityModel, name: 'Cities' },
-            { model: NeighborhoodModel, name: 'Neighborhoods' }
+            { model: StateModel, name: 'States' },
+            { model: CountryModel, name: 'Countries' }
         ];
 
         for (const { model, name } of collections) {
@@ -36,42 +49,49 @@ class DatabaseSeeder {
     static async seedLocations(shouldClear: boolean = false) {
         try {
             await db.connectToDatabase();
-            
+
             if (shouldClear) {
                 await this.clearAllCollections();
             }
 
             for (const countryData of locationsData) {
-                const country = await CountryModel.create({ name: countryData.name });
-                Logger.logger(`País criado: ${country.name}`, 'Seeder', 'info');
+                const country = await this.upsertDocument(
+                    CountryModel,
+                    { name: countryData.name },
+                    { name: countryData.name }
+                );
+                Logger.logger(`Pais garantido: ${country.name}`, 'Seeder', 'info');
 
                 for (const stateData of countryData.states) {
-                    const state = await StateModel.create({
-                        name: stateData.name,
-                        country: country._id
-                    });
-                    Logger.logger(`Estado criado: ${state.name}`, 'Seeder', 'info');
+                    const state = await this.upsertDocument(
+                        StateModel,
+                        { name: stateData.name, country: country._id },
+                        { name: stateData.name, country: country._id }
+                    );
+                    Logger.logger(`Estado garantido: ${state.name}`, 'Seeder', 'info');
 
                     for (const cityData of stateData.cities) {
-                        const city = await CityModel.create({
-                            name: cityData.name,
-                            state: state._id
-                        });
-                        Logger.logger(`Cidade criada: ${city.name}`, 'Seeder', 'info');
+                        const city = await this.upsertDocument(
+                            CityModel,
+                            { name: cityData.name, state: state._id },
+                            { name: cityData.name, state: state._id }
+                        );
+                        Logger.logger(`Cidade garantida: ${city.name}`, 'Seeder', 'info');
 
                         for (const neighborhoodName of cityData.neighborhoods) {
-                            await NeighborhoodModel.create({
-                                name: neighborhoodName,
-                                city: city._id
-                            });
-                            Logger.logger(`Bairro criado: ${neighborhoodName}`, 'Seeder', 'info');
+                            await this.upsertDocument(
+                                NeighborhoodModel,
+                                { name: neighborhoodName, city: city._id },
+                                { name: neighborhoodName, city: city._id }
+                            );
+                            Logger.logger(`Bairro garantido: ${neighborhoodName}`, 'Seeder', 'info');
                         }
                     }
                 }
             }
-            Logger.logger('Seed completado com sucesso!', 'Seeder', 'success');
+            Logger.logger('Seed de localidades completado com sucesso!', 'Seeder', 'success');
         } catch (error) {
-            Logger.logger(`Erro no processo de seed: ${error}`, 'Seeder', 'error');
+            Logger.logger(`Erro no processo de seed de localidades: ${error}`, 'Seeder', 'error');
             throw error;
         }
     }
@@ -79,19 +99,23 @@ class DatabaseSeeder {
     static async seedRoles(shouldClear: boolean = false) {
         try {
             await db.connectToDatabase();
-    
+
             if (shouldClear) {
                 await this.clearCollection(RoleModel, 'Roles');
             }
-    
+
             for (const roleData of rolesData) {
-                const role = await RoleModel.create(roleData);
-                Logger.logger(`Role criada: ${role.name}`, 'Seeder', 'info');
+                const role = await this.upsertDocument(
+                    RoleModel,
+                    { name: roleData.name },
+                    roleData
+                );
+                Logger.logger(`Role garantida: ${role.name}`, 'Seeder', 'info');
             }
-    
-            Logger.logger('Seed de Roles completado com sucesso!', 'Seeder', 'success');
+
+            Logger.logger('Seed de roles completado com sucesso!', 'Seeder', 'success');
         } catch (error) {
-            Logger.logger(`Erro no processo de seed de Roles: ${error}`, 'Seeder', 'error');
+            Logger.logger(`Erro no processo de seed de roles: ${error}`, 'Seeder', 'error');
             throw error;
         }
     }

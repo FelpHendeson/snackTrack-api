@@ -19,7 +19,7 @@ export default class MovementRepository {
     }
 
     async update(id: Types.ObjectId, data: Partial<IMovementInput>): Promise<IMovementOutput | null> {
-        return await MovementModel.findByIdAndUpdate(id, { $set: data }, { new: true }).populate("originId");
+        return await MovementModel.findByIdAndUpdate(id, { $set: data }, { new: true, runValidators: true }).populate("originId");
     }
 
     async delete(id: Types.ObjectId): Promise<void> {

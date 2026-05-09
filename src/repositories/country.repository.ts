@@ -15,7 +15,7 @@ export default class CountryRepository {
     }
 
     async update(id: Types.ObjectId, data: any) {
-        return await CountryModel.findByIdAndUpdate(id, { $set: data }, { new: true });
+        return await CountryModel.findByIdAndUpdate(id, { $set: data }, { new: true, runValidators: true });
     }
 
     async delete(id: Types.ObjectId) {

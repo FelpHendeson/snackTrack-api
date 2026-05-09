@@ -2,8 +2,8 @@ import { Schema, model, models } from 'mongoose';
 import { IAddressOutput } from '../interfaces/IAddress.interface';
 
 const addressSchema = new Schema({
-    street: { type: String, required: true },
-    number: { type: String, required: true },
+    street: { type: String, required: true, trim: true },
+    number: { type: String, required: true, trim: true },
     neighborhood: { type: Schema.Types.ObjectId, ref: 'Neighborhood', required: true }
 }, {
     timestamps: true

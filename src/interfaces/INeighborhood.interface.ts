@@ -6,7 +6,7 @@ export interface INeighborhoodInput {
 }
 
 export interface INeighborhoodOutput extends Document {
-    _id: string;
+    _id: Types.ObjectId;
     name: string;
     city: Types.ObjectId;
     createdAt?: Date;

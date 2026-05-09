@@ -1,7 +1,7 @@
 import { Router } from "express";
 import CashRegisterController from "../controllers/cashRegister.controller";
 import { authenticateToken } from "../middlewares/auth.middlewares";
-import { validateSchema } from "../middlewares/validationHandler.middlewares";
+import { validateQuerySchema, validateSchema } from "../middlewares/validationHandler.middlewares";
 import { 
     openCashRegisterSchema,
     closeCashRegisterSchema,
@@ -23,7 +23,7 @@ router.use(authenticateToken);
 router.post(`${routePrefix}/open`, validateSchema(openCashRegisterSchema), controller.open);
 router.post(`${routePrefix}/:id/close`, validateObjectId, validateSchema(closeCashRegisterSchema), controller.close);
 router.post(`${routePrefix}/:id/reopen`, validateObjectId, controller.reopen);
-router.get(`${routePrefix}/workspace`, validateSchema(findAllCashRegistersSchema), controller.findAll);
+router.get(`${routePrefix}/workspace`, validateQuerySchema(findAllCashRegistersSchema), controller.findAll);
 router.get(`${routePrefix}/:id`, validateObjectId, controller.findById);
 router.put(`${routePrefix}/:id`, validateObjectId, validateSchema(updateCashRegisterSchema), controller.update);
 router.delete(`${routePrefix}/:id`, validateObjectId, controller.delete);

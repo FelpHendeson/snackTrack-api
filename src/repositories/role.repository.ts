@@ -21,7 +21,7 @@ export default class RoleRepository {
     }
 
     async update(id: Types.ObjectId, dataModel: IRoleInput): Promise<IRoleOutput | null> {
-        return await RoleModel.findByIdAndUpdate(id, dataModel, {new: true});
+        return await RoleModel.findByIdAndUpdate(id, dataModel, { new: true, runValidators: true });
     }
 
     async delete(id: Types.ObjectId): Promise<IRoleOutput | null> {
